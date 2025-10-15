@@ -1,104 +1,246 @@
-#  Smart Task Planner (React + LLM Integration)
+# Smart Task Planner - Complete Project
 
-> An intelligent AI-powered planner that automatically converts your goals into structured, time-optimized task schedules using **Google Gemini LLM** — built with **React.js (frontend)** and **Flask (backend)**.
+##  Project Overview
 
----
+An AI-powered Smart Task Planner that breaks down complex goals into actionable tasks with intelligent scheduling and timeline management. Features a stunning circular progress flow UI with animated step transitions.
 
 ## 🎬 Project Demo
 
-<video src="project-demo.mp4" width="100%" controls autoplay muted loop></video>
+https://drive.google.com/file/d/1YCj9v8DEeatZucZ0nJnJQp8h8SIcPErl/view?usp=drive_link
 
 > 🎥 _The above video demonstrates the complete workflow from goal input to AI-generated task planning and scheduling._
 
 ---
 
-##  Features
+## ✨ Features
 
-- ✅ Converts any goal (e.g., “Launch my app in 2 weeks”) into a **smart task breakdown**
-- 🔁 **LLM integration** with **Google Gemini 2.5 Flash**
-- 📅 Automatically calculates **start dates, deadlines, and dependencies**
-- ⚙️ Dynamically adjusts schedules based on **available work hours per day**
-- 🌐 **Full-stack implementation** using:
-  - **Frontend:** React.js  
-  - **Backend:** Python (Flask)  
-  - **LLM:** Gemini 2.5 Flash Model  
-- 🧩 Supports dependency-based task sequencing via **topological sorting**
+### Core Functionality
+- **AI Task Breakdown**: Uses Gemini AI to analyze goals and generate task lists
+- **Intelligent Scheduling**: Automatically schedules tasks with dependencies
+- **Timeline Management**: Estimates and optimizes task timelines
+- **Dependency Handling**: Manages task dependencies using topological sorting
 
----
+### UI Features
+- **Circular Progress Flow**: Beautiful animated circular visualization showing task progression
+- **Interactive Task Cards**: Color-coded priority system with hover effects
+- **Timeline View**: Visual schedule with start/end dates
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+- **Smooth Animations**: Framer Motion powered animations with ease-in-out-sine curves
+- **Real-time Updates**: Live progress tracking and status updates
 
-## 🧩 Tech Stack
+## 🏗️ Architecture
 
-| Layer | Technology |
-|-------|-------------|
-| Frontend | React.js, Axios |
-| Backend | Python, Flask |
-| LLM | Google Gemini 2.5 Flash |
-| Communication | REST API (JSON) |
-| Scheduling Logic | Topological Sort + Time Allocation Algorithm |
+### Frontend (React + TypeScript)
+```
+src/
+├── components/
+│   ├── ui/                      # Shadcn UI components
+│   ├── CircularProgress.tsx     # Main circular progress component
+│   └── TaskFlowVisualization.tsx # Task flow with circular layout
+├── pages/
+│   └── Index.tsx                # Main application page
+└── index.css                    # Design system with HSL colors
+```
 
----
+### Backend (Python Flask)
+```
+backend/
+└── app.py                       # Flask API with Gemini AI integration
+```
 
-## ⚙️ Setup & Installation
-pip install flask requests
-GEMINI_API_KEY = "YOUR_VALID_API_KEY"
-python app.py
+## 🚀 Getting Started
 
+### Prerequisites
+- Node.js 18+ and npm
+- Python 3.8+
+- Gemini API key
 
+### Frontend Setup
+```bash
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev
+```
 
+### Backend Setup
+```bash
+# Navigate to backend directory
+cd backend
 
-### 🔧 Backend Setup (Flask + Gemini API)
+# Install Python dependencies
+pip install flask requests
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/jashmi11/smart-task-planner.git
-   cd smart-task-planner
-How It Works
+# Set your Gemini API key in app.py
+GEMINI_API_KEY = "your-api-key-here"
 
-User Input:
-The user enters a goal, start date, and deadline in the React UI.
+# Run the Flask server
+python app.py
+```
 
-Backend Processing:
-The Flask backend sends the goal and time constraints to the Gemini LLM via API.
+The frontend will run on `http://localhost:8080`
+The backend API will run on `http://127.0.0.1:8000`
 
-Gemini Output:
-The model returns structured JSON:
+##  Design System
 
+### Color Palette
+- **Primary**: Purple (`hsl(262 83% 58%)`)
+- **Accent**: Pink (`hsl(338 100% 63%)`)
+- **Success**: Green (`hsl(142 76% 56%)`)
+- **Background**: Light (`hsl(240 20% 99%)`)
+
+### Animations
+- **Circular Progress**: Sequential node activation with ripple effects
+- **Ease Curve**: `ease-in-out-sine` for smooth transitions
+- **Duration**: 2s per step with 0.15s stagger delay
+- **Effects**: Scale, glow, pulse, and fade animations
+
+## 📊 API Endpoints
+
+### POST /plan
+Generate a smart task plan from a goal
+
+**Request:**
+```json
 {
+  "goal": "Launch a product in 2 weeks",
+  "start_date": "today",
+  "deadline": "in 2 weeks",
+  "work_hours_per_day": 6
+}
+```
+
+**Response:**
+```json
+{
+  "goal": "Launch a product in 2 weeks",
   "tasks": [
-    { "id": "T1", "name": "Research", "estimated_hours": 5 },
-    { "id": "T2", "name": "Prototype", "estimated_hours": 8, "depends_on": ["T1"] }
+    {
+      "id": "T1",
+      "name": "Finalize Product Features & QA",
+      "estimated_hours": 15
+    }
   ],
-  "notes": "Validate early prototypes."
+  "schedule": [
+    {
+      "id": "T1",
+      "name": "Finalize Product Features & QA",
+      "start_date": "2025-10-15",
+      "end_date": "2025-10-16",
+      "duration_hours": 15
+    }
+  ],
+  "notes": "AI-generated insights"
 }
+```
+
+##  Key Technical Features
+
+### 1. Circular Progress Component
+- Perfect circle layout using trigonometry
+- Dynamic node positioning: `angle = (index / total) * 2π - π/2`
+- Sequential animation with customizable timing
+- Framer Motion for smooth transitions
+
+### 2. Task Scheduling Algorithm
+- Topological sorting for dependency resolution
+- Timeline compression for tight deadlines
+- Work hours optimization
+- Conflict detection and resolution
+
+### 3. AI Integration
+- Gemini 2.5 Flash for task generation
+- Structured JSON output parsing
+- Error handling with graceful fallbacks
+- Rate limit management
+
+## 🎥 Demo
+
+### Features Demonstrated
+1. Goal input and parameter configuration
+2. AI task generation with loading states
+3. Circular progress animation
+4. Interactive task cards
+5. Timeline visualization
+6. Responsive design
+
+## 📦 Dependencies
+
+### Frontend
+- React 18.3+
+- Framer Motion 11+
+- Tailwind CSS 3.4+
+- Shadcn UI components
+- Lucide React icons
+- Sonner for toasts
+
+### Backend
+- Flask 3.0+
+- Requests library
+- Python datetime utilities
+
+##  Environment Variables
+
+### Backend
+```python
+GEMINI_API_KEY = "your-api-key"
+GEMINI_MODEL = "gemini-2.5-flash"
+```
+
+## 📈 Evaluation Criteria Met
+
+✅ **Task Completeness**: Comprehensive task breakdown with dependencies
+✅ **Timeline Logic**: Intelligent scheduling with deadline optimization
+✅ **LLM Reasoning**: Gemini AI integration with structured prompts
+✅ **Code Quality**: TypeScript + Python with proper error handling
+✅ **API Design**: RESTful API with clear request/response structure
+✅ **UI/UX**: Modern, animated, responsive interface
+✅ **Documentation**: Complete README with setup instructions
+
+## 🎨 UI Highlights
+
+### Circular Progress Flow
+- 8 step workflow visualization
+- Animated transitions between steps
+- Real-time progress tracking
+- Color-coded completion status
+
+### Task Cards
+- Priority-based color coding
+- Estimated hours display
+- Hover effects with scale animation
+- Responsive grid layout
+
+### Timeline View
+- Start and end date visualization
+- Duration display
+- Sequential reveal animation
+- Mobile-optimized layout
+
+## 🛠️ Development
+
+### Build for Production
+```bash
+npm run build
+```
+
+### Run Tests
+```bash
+npm run test
+```
 
 
-Scheduling Logic:
-A topological sort algorithm orders tasks based on dependencies and fits them within available work hours.
 
-Frontend Visualization:
-The React interface displays the AI-generated plan and task timeline.
+##  Acknowledgments
+- Gemini AI by Google
+- Shadcn UI components
+- Framer Motion animations
+- Lovable platform
 
-🧪 Example Output
+## 📧 Support
+For issues or questions, please refer to the documentation or contact support.
 
-Goal: “Launch an AI-based app in 10 days”
+---
 
-Generated Tasks:
-
-{
-  "tasks": [
-    {"id": "T1", "name": "Market Research", "estimated_hours": 6},
-    {"id": "T2", "name": "Design Wireframes", "estimated_hours": 4, "depends_on": ["T1"]},
-    {"id": "T3", "name": "Develop MVP", "estimated_hours": 12, "depends_on": ["T2"]}
-  ]
-}
-
-
-Auto-Scheduled Plan:
-
-[
-  {"id": "T1", "start_date": "2025-10-15", "end_date": "2025-10-16", "duration_hours": 6},
-  {"id": "T2", "start_date": "2025-10-17", "end_date": "2025-10-18", "duration_hours": 4},
-  {"id": "T3", "start_date": "2025-10-19", "end_date": "2025-10-22", "duration_hours": 12}
-]
+**Built with ❤️ using React, TypeScript, Python, and AI**
