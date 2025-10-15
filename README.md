@@ -1,4 +1,4 @@
-# 🧠 Smart Task Planner (React + LLM Integration)
+#  Smart Task Planner (React + LLM Integration)
 
 > An intelligent AI-powered planner that automatically converts your goals into structured, time-optimized task schedules using **Google Gemini LLM** — built with **React.js (frontend)** and **Flask (backend)**.
 
@@ -12,7 +12,7 @@
 
 ---
 
-## 🚀 Features
+##  Features
 
 - ✅ Converts any goal (e.g., “Launch my app in 2 weeks”) into a **smart task breakdown**
 - 🔁 **LLM integration** with **Google Gemini 2.5 Flash**
