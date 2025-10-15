@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 240 20% 99%;
+    --foreground: 240 15% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 15% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 15% 9%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 262 90% 68%;
+
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 15% 9%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+
+    --accent: 338 100% 63%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 142 76% 56%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 262 83% 58%;
+
+    --radius: 0.75rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(262 90% 68%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(338 100% 63%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(240 20% 99%) 0%, hsl(262 90% 98%) 50%, hsl(240 20% 99%) 100%);
+    
+    --shadow-sm: 0 1px 2px 0 hsl(240 15% 9% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(240 15% 9% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(240 15% 9% / 0.1);
+    --shadow-glow: 0 0 30px hsl(262 83% 58% / 0.3);
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .dark {
+    --background: 240 15% 6%;
+    --foreground: 240 5% 96%;
+
+    --card: 240 15% 9%;
+    --card-foreground: 240 5% 96%;
+
+    --popover: 240 15% 9%;
+    --popover-foreground: 240 5% 96%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 262 90% 68%;
+
+    --secondary: 240 10% 15%;
+    --secondary-foreground: 240 5% 96%;
+
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 64%;
+
+    --accent: 338 100% 63%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 142 76% 56%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 10% 18%;
+    --input: 240 10% 18%;
+    --ring: 262 83% 58%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(262 90% 68%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(338 100% 63%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(240 15% 6%) 0%, hsl(262 40% 12%) 50%, hsl(240 15% 6%) 100%);
+    
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.3);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(262 83% 58% / 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+}
