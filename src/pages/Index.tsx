@@ -48,7 +48,7 @@ const Index = () => {
     setResult(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/plan", {
+      const response = await fetch("https://smart-taskplanner.onrender.com/plan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
