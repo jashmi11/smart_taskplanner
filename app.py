@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ✅ Smart Task Planner — FINAL STABLE VERSION (bulletproof JSON extraction)
+# ✅ Smart Task Planner — FINAL STABLE VERSION (Gemini JSON-SAFE)
 
 from __future__ import annotations
 import os, re, json, requests
@@ -10,11 +10,11 @@ from flask import Flask, request, jsonify
 # ---------------- CONFIG ----------------
 PORT = 8000
 BIND = "127.0.0.1"
-TIMEZONE_OFFSET_MIN = 330
+TIMEZONE_OFFSET_MIN = 330  # IST
 TZ = timezone(timedelta(minutes=TIMEZONE_OFFSET_MIN))
 
 # ✅ Gemini Configuration
-GEMINI_API_KEY = "AIzaSyDR10mZx0ttUHuvBm7g-uguq9n8ZjbEwuM"  # paste valid key here
+GEMINI_API_KEY = "AIzaSyDR10mZx0ttUHuvBm7g-uguq9n8ZjbEwuM"
 GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={{key}}"
 
@@ -33,7 +33,7 @@ def add_cors_headers(resp):
 
 
 # ---------------- UTILITIES ----------------
-def today_str(): 
+def today_str():
     return datetime.now(TZ).date().strftime(ISO_DATE)
 
 def parse_start_date(s: str | None) -> datetime:
@@ -42,8 +42,10 @@ def parse_start_date(s: str | None) -> datetime:
     base = datetime.now(TZ)
     if s == "today": return base
     if s == "tomorrow": return base + timedelta(days=1)
-    try: return datetime.strptime(s, "%Y-%m-%d").replace(tzinfo=TZ)
-    except: return base
+    try:
+        return datetime.strptime(s, "%Y-%m-%d").replace(tzinfo=TZ)
+    except:
+        return base
 
 def parse_deadline(s: str | None, start_dt: datetime):
     if not s: return None
@@ -54,8 +56,10 @@ def parse_deadline(s: str | None, start_dt: datetime):
             n = int(m.group(1))
             if "week" in (m.group(2) or ""): n *= 7
             return start_dt + timedelta(days=n)
-    try: return datetime.strptime(s, "%Y-%m-%d").replace(tzinfo=TZ)
-    except: return None
+    try:
+        return datetime.strptime(s, "%Y-%m-%d").replace(tzinfo=TZ)
+    except:
+        return None
 
 
 # ---------------- TASK SCHEDULER ----------------
@@ -108,27 +112,30 @@ def schedule_tasks(tasks, start_dt, deadline, work_hours_per_day):
 
 # ---------------- GEMINI ----------------
 PLANNER_PROMPT = (
-    "You are an expert project planner. Given a GOAL, return *only JSON* like:\n"
-    "{\"tasks\":[{\"id\":\"T1\",\"name\":\"Research\",\"estimated_hours\":5}],\"notes\":\"string\"}"
+    "You are an expert project planner. Respond ONLY with valid JSON. No markdown or extra text.\n"
+    "Strict format:\n"
+    "{"
+    "\"tasks\":[{\"id\":\"T1\",\"name\":\"Research\",\"estimated_hours\":5,\"depends_on\":[]}],"
+    "\"notes\":\"string\""
+    "}"
 )
 
 def extract_json_safe(text: str) -> dict:
-    """Extracts and parses JSON safely even from messy text."""
+    """Safely extract JSON from Gemini output even if messy."""
     text = text.strip()
-    text = re.sub(r"^```json|```$", "", text, flags=re.MULTILINE).strip()
-    json_match = re.search(r"\{.*\}", text, re.DOTALL)
-    if json_match:
-        text = json_match.group(0)
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        # Last resort — try removing trailing junk
-        text = text.split("}") [0] + "}"
-        try:
-            return json.loads(text)
-        except Exception:
-            raise RuntimeError(f"Gemini returned invalid JSON or non-JSON text: {text[:400]}")
+    text = re.sub(r"```(?:json)?", "", text).strip()
+    match = re.search(r"\{.*\}", text, re.DOTALL)
+    if not match:
+        raise RuntimeError(f"Gemini returned no JSON structure: {text[:200]}")
+    raw = match.group(0)
 
+    for fix in [raw, raw.replace("\n", ""), raw.replace("\r", "")]:
+        try:
+            return json.loads(fix)
+        except json.JSONDecodeError:
+            continue
+
+    raise RuntimeError(f"Gemini returned invalid JSON or non-JSON text: {raw[:400]}")
 
 def call_gemini(goal, start_date, deadline, hours_per_day):
     url = GEMINI_URL.format(key=GEMINI_API_KEY)
@@ -158,6 +165,7 @@ def call_gemini(goal, start_date, deadline, hours_per_day):
     except Exception as e:
         raise RuntimeError(f"Unexpected response format: {e}; raw={str(data)[:300]}")
 
+    print("🔍 Raw Gemini Output:\n", text[:500])  # Debug log
     return extract_json_safe(text)
 
 
@@ -172,7 +180,8 @@ def home():
     <input id='start' placeholder='today'><br>
     <input id='deadline' placeholder='in 2 weeks'><br>
     <input id='hours' type='number' value='6'><br>
-    <button onclick='run()'>Generate Plan</button><div id='out'></div>
+    <button onclick='run()'>Generate Plan</button>
+    <div id='out' style='margin-top:1rem;'></div>
     <script>
     async function run(){{
         const b={{goal:goal.value,start_date:start.value,deadline:deadline.value,work_hours_per_day:parseInt(hours.value)||6}};
@@ -180,7 +189,9 @@ def home():
         const e=document.getElementById('out');
         if(!r.ok){{e.innerHTML='<p style=color:red>'+await r.text()+'</p>';return;}}
         const d=await r.json();
-        e.innerHTML='<h3>Tasks</h3><pre>'+JSON.stringify(d.tasks,null,2)+'</pre><h3>Schedule</h3><pre>'+JSON.stringify(d.schedule,null,2)+'</pre>';
+        e.innerHTML='<h3>Tasks</h3><pre>'+JSON.stringify(d.tasks,null,2)
+                   +'</pre><h3>Schedule</h3><pre>'+JSON.stringify(d.schedule,null,2)
+                   +'</pre><h3>Notes</h3><pre>'+JSON.stringify(d.notes,null,2)+'</pre>';
     }}
     </script></body></html>
     """
@@ -192,14 +203,19 @@ def plan():
         goal = p.get("goal", "").strip()
         if not goal:
             return jsonify({"error": "Goal required"}), 400
+
         s = parse_start_date(p.get("start_date"))
         d = parse_deadline(p.get("deadline"), s)
         h = int(p.get("work_hours_per_day") or WORK_HOURS_PER_DAY_DEFAULT)
+
         gem = call_gemini(goal, s.date().isoformat(), d.date().isoformat() if d else None, h)
         tasks = gem.get("tasks", [])
-        for i, t in enumerate(tasks, 1): t.setdefault("id", f"T{i}")
+        for i, t in enumerate(tasks, 1):
+            t.setdefault("id", f"T{i}")
+
         sched = schedule_tasks(tasks, s, d, h)
         return jsonify({"goal": goal, "tasks": tasks, "schedule": sched, "notes": gem.get("notes")})
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
